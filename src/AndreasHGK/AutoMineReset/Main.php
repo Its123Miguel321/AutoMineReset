@@ -47,64 +47,63 @@ class Main extends PluginBase{
 	public function onCommand(CommandSender $sender, Command $cmd, string $label, array $args) : bool{
 		switch(strtolower($cmd->getName())){
 			case "mr";
-			if($sender->hasPermission("minereset.command.resetall")){
-				$this->resetAll();
-				return true;
-			}
-			else{
-            $sender->sendMessage(C::RED . "You do not have permission to run this command." . C::RESET);
-			return true;
-            }
+				if($sender->hasPermission("minereset.command.resetall")){
+					$this->resetAll();
+					return true;
+				} else {
+            				$sender->sendMessage(C::RED . "You do not have permission to run this command." . C::RESET);
+					return true;
+            			}
 			break;
-		case "autoreset":
-			if($sender->hasPermission("amr.autoreset")){
-				if($this->paused == true){
-				$this->paused = false;
-				$sender->sendMessage(C::BOLD.C::AQUA."»".C::RESET.C::DARK_AQUA." Automatic reset has been ".C::GREEN."enabled".C::DARK_AQUA."!");
-				$this->getLogger()->notice(C::GREEN." The timer has been enabled by ".$sender->getName()."!");
-				}else{
-				$this->paused = true;
-				$sender->sendMessage(C::BOLD.C::AQUA."»".C::RESET.C::DARK_AQUA." Automatic reset has been ".C::RED."disabled".C::DARK_AQUA."!");
-				$this->getLogger()->notice(C::GREEN." The timer has been disabled by ".$sender->getName()."!");
-				$this->autopaused = false;
+		
+			case "autoreset":
+				if($sender->hasPermission("amr.autoreset")){
+					if($this->paused == true){
+						$this->paused = false;
+						$sender->sendMessage(C::BOLD.C::AQUA."»".C::RESET.C::DARK_AQUA." Automatic reset has been ".C::GREEN."enabled".C::DARK_AQUA."!");
+						$this->getLogger()->notice(C::GREEN." The timer has been enabled by ".$sender->getName()."!");
+					}else{
+						$this->paused = true;
+						$sender->sendMessage(C::BOLD.C::AQUA."»".C::RESET.C::DARK_AQUA." Automatic reset has been ".C::RED."disabled".C::DARK_AQUA."!");
+						$this->getLogger()->notice(C::GREEN." The timer has been disabled by ".$sender->getName()."!");
+						$this->autopaused = false;
+					}
+				} else {
+            				$sender->sendMessage(C::RED . "You do not have permission to run this command." . C::RESET);
 				}
-			} else {
-            $sender->sendMessage(C::RED . "You do not have permission to run this command." . C::RESET);
+				return true;
+			break;
 		}
-		return true;
-		break;
-	}
 	}
 	
 	public function autostop(){
 		static $y = false;
-			if($this->getConfig()->get('sleep-when-empty') == true){
-				if(count($this->getServer()->getOnlinePlayers()) != 0){
-					if($this->paused == true){
-						if($y == true){
+		if($this->getConfig()->get('sleep-when-empty') == true){
+			if(count($this->getServer()->getOnlinePlayers()) != 0){
+				if($this->paused == true){
+					if($y == true){
 						$this->paused = false;
 						$this->autopaused = false;
 						$y = false;
 						$this->getLogger()->notice(C::GREEN." The timer has been auto-enabled!");
-						}
 					}
-					} else {
-						if($y == false) {
-						$this->paused = true;
-						$y = true;
-						$this->autopaused = true;
-						$this->getLogger()->notice(C::GREEN." The timer has been auto-disabled!");
-						}
-					}
+				}
+			} else {
+				if($y == false) {
+					$this->paused = true;
+					$y = true;
+					$this->autopaused = true;
+					$this->getLogger()->notice(C::GREEN." The timer has been auto-disabled!");
+				}
 			}
 		}
+	}
+	
 	public function resetAll(){
-		$command = "mine reset-all";
+		$command = "minereset reset-all";
 		$this->getServer()->dispatchCommand(new ConsoleCommandSender(),$command);
-		
 		Server::getInstance()->broadcastMessage(C::BOLD.C::AQUA."»".C::RESET.C::DARK_AQUA." All mines have been reset!");
 		}
-	
 	
 	public function onDisable(){
 		$this->getLogger()->notice(C::GREEN." Disabled!");
@@ -116,7 +115,7 @@ class Main extends PluginBase{
 		if($this->sec >= $this->interval){
 			$this->resetAll();
 		}
-		}
+	}
 	
 	public function betterTimer() {
 		if($this->paused == false){
